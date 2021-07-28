@@ -1,6 +1,7 @@
 import java.util.*;
 
 class Main {
+  static boolean PRINT = true;
   public static void main(String[] args) {
     String raw = 
       "0 1\n" + 
@@ -13,7 +14,7 @@ class Main {
       "4 5\n" + 
       "4 7\n" + 
       "5 8\n" + 
-      "6 7\n" + 
+      "6 7\n" +
       "7 8\n";
     String[] edgeList = raw.split("\n");
     int V = 8;
@@ -29,14 +30,16 @@ class Main {
       adjList[u].add(v);
       adjList[v].add(u);
     }
-    System.out.println("Graph: ");
-    for (int u=0; u<=V; u++) {
-      System.out.printf(u+": ");
-      for (int v: adjList[u]) {
-        System.out.printf("%d ", v);
-      } System.out.println();
+    if (PRINT) {
+      System.out.println("Graph: ");
+      for (int u=0; u<=V; u++) {
+        System.out.printf(u+": ");
+        for (int v: adjList[u]) {
+          System.out.printf("%d ", v);
+        } System.out.println();
+      }
     }
-    Vanilla gcHelper = new Vanilla(adjList, colors);
+    DSatur gcHelper = new DSatur(adjList, colors);
     gcHelper.run();
   }
 }

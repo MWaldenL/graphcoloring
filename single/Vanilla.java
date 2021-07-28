@@ -6,11 +6,11 @@ import java.util.*;
 class Vanilla extends GraphColoring {
   public Vanilla(ArrayList<Integer>[] adjList, char[] colorSet) {
     super(adjList, colorSet);
+    color[0] = 'R';
   }
 
   public void run() {
-    color[0] = 'R';
-    this.dfs(0);
+    dfs(0);
     printSolution();
   }
   
@@ -25,15 +25,5 @@ class Vanilla extends GraphColoring {
         }
       }
     }
-  }
-
-  private void printSolution() {
-    if (color.length == 0) {
-      System.out.println("No solution");
-      return;
-    }
-    for (char c: color) {
-      System.out.printf("%c ", c);
-    } System.out.println();
   }
 }

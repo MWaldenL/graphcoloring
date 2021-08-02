@@ -62,43 +62,16 @@ def generate_random_weighted_graph(v,e,min_weight,max_weight,seed=112263,
         return edges
 
 def main():
-    MODE = 1
+    MODE = "random"
     with open('test.txt', 'w') as f:
-      if MODE == 1: # random
-        g = generate_random_weighted_graph(
-            v=10,
-            e=25,
-            min_weight=1,
-            max_weight=10,
-            seed=11111,
-            mode="random"
-        )
-        f.write('\n'.join([f'{u} {v}' for u, v, w in g]))
-        # print("RANDOM GRAPH:")
-        # print("\n".join([f"{u}-{v} (weight: {w})" for u,v,w in my_graph]))
-      elif MODE == 2: # linear
-        my_graph = generate_random_weighted_graph(
-            v=10,
-            e=25,
-            min_weight=1,
-            max_weight=10,
-            seed=11111,
-            mode="linear"
-        )
-        print("LINEAR GRAPH:")
-        print()
-        print("\n".join([f"{u}-{v} (weight: {w})" for u,v,w in my_graph]))
-      else: # binary
-        my_graph = generate_random_weighted_graph(
-            v=10,
-            e=25,
-            min_weight=1,
-            max_weight=10,
-            seed=11111,
-            mode="binary"
-        )
-        print("BINARY GRAPH:")
-        print("\n".join([f"{u}-{v} (weight: {w})" for u,v,w in my_graph]))
-
+      g = generate_random_weighted_graph(
+          v=10,
+          e=25,
+          min_weight=1,
+          max_weight=10,
+          seed=11111,
+          mode=MODE
+      )
+      f.write('\n'.join([f'{u} {v}' for u, v, w in g]))
 if __name__ == "__main__":
     main()

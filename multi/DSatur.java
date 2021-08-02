@@ -2,11 +2,6 @@ import java.util.*;
 import java.util.concurrent.*;
 
 class DSatur implements Callable<Boolean> {
-  private Semaphore turnstile = new Semaphore(1);
-  private Object pendingLock = new Object();
-  private Object colorLock = new Object();
-  private Object jobLock = new Object();
-
   // Rules: 
   // only one person can color
   // everyone waits when someone is coloring
@@ -17,18 +12,19 @@ class DSatur implements Callable<Boolean> {
     int satList[];
 
     while (!finished) {
-      synchronized(jobLock) {
+      synchronized(Shared.jobLock) { // mutex
         finished = Shared.nodeList.size() == 0;
+        someoneIsColoring = Shared.someoneIsColoring;
         if (!finished && someoneIsColoring) { // if there are no nodes being colored
           Shared.pending++;
         }
-      } 
+      }
       if (finished) break;
 
       if (someoneIsColoring) {
         turnstileLock(); // wait here
         turnstileUnlock(); // the last guy has finished coloring and informed us
-        synchronized(pendingLock) { 
+        synchronized(Shared.pendingLock) { 
           Shared.pending--;
           if (Shared.pending == 0) { // last guy locks the turnstile
             turnstileLock();
@@ -43,12 +39,13 @@ class DSatur implements Callable<Boolean> {
         satList[u] = !Shared.visited[u] ? sat(u) : 0;
       }
       int node = getNextNode(satList);
-      synchronized(colorLock) {
+      synchronized(Shared.colorLock) {
+        Shared.someoneIsColoring = true;
         Shared.visited[node] = true;
         for (char color: Shared.colorSet) {
           if (isValidColoring(node, color)) {
             Shared.color[node] = color;
-            someoneIsColoring = false;
+            Shared.someoneIsColoring = false;
             break;
           }
         }
@@ -63,16 +60,6 @@ class DSatur implements Callable<Boolean> {
     return true;
   }
 
-  private void turnstileLock() {
-    try {
-      turnstile.acquire();
-    } catch(InterruptedException e){}
-  }
-
-  private void turnstileUnlock() {
-    turnstile.release();
-  }
-
   private boolean isValidColoring(int node, char color) {
     for (int neighbor: Shared.adjList[node])
       if (Shared.color[neighbor] == color)
@@ -80,7 +67,7 @@ class DSatur implements Callable<Boolean> {
     return true;
   }
 
-  private int sat(int u) { // heuristic: compute for saturation
+  private int sat(int u) { // heuristic: number of uniquely colored nodes
     Set<Character> unique = new HashSet<Character>(); 
     for (int v: Shared.adjList[u]) {
       unique.add(Shared.color[v]);
@@ -102,5 +89,15 @@ class DSatur implements Callable<Boolean> {
       }
     }
     return ans;
+  }
+  
+  private void turnstileLock() {
+    try {
+      Shared.turnstile.acquire();
+    } catch(InterruptedException e){}
+  }
+
+  private void turnstileUnlock() {
+    Shared.turnstile.release();
   }
 }

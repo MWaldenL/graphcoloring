@@ -54,22 +54,21 @@ class DSatur extends GraphColoring {
   }
 
   private void dsatur() {
-    int u0 = getStartingNode(), satList[];
+    int u0 = getStartingNode(), satList[]; // get the node with the highest degree
     visited[u0] = true;
     color[u0] = colorSet[new Random().nextInt(colorSet.length)]; // random initial color
     nodeList.remove(u0);
-    while (nodeList.size() > 0) {
-      satList = new int[V];
+    while (nodeList.size() > 0) { // if done coloring, stop
+      satList = new int[V]; 
       for (int u=0; u < V; u++) {
         satList[u] = !visited[u] ? sat(u) : 0;
       }
       int node = getNextNode(satList);
       visited[node] = true;
-      // for (char col: colorSet) {
-      char col;
-      while (!isValidColoring(node, col = colorSet[new Random().nextInt(colorSet.length)]));
-      color[node] = col;
-      // }
+      for (char col: colorSet) {
+        if (isValidColoring(node, col))
+          color[node] = col;
+      }
       nodeList.remove(Integer.valueOf(node));
     }
   }

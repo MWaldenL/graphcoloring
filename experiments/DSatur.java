@@ -14,17 +14,19 @@ class DSatur implements Callable<Boolean> {
     while (!finished) {
       synchronized(Shared.jobLock) { // mutex
         finished = Shared.nodeList.size() == 0;
+        if (finished) break;
         someoneIsColoring = Shared.someoneIsColoring;
         if (!finished && someoneIsColoring) { // if there are no nodes being colored
           Shared.pending++;
         }
       }
-      if (finished) break;
 
       if (someoneIsColoring) {
+        // System.out.println("Waiting outside " + Thread.currentThread().getName());
         turnstileLock(); // wait here
         turnstileUnlock(); // the last guy has finished coloring and informed us
         synchronized(Shared.pendingLock) { 
+          // System.out.println("Waiting inside pendingLock " + Thread.currentThread().getName());
           Shared.pending--;
           if (Shared.pending == 0) { // last guy locks the turnstile
             turnstileLock();
@@ -39,28 +41,37 @@ class DSatur implements Callable<Boolean> {
         satList[u] = !Shared.visited[u] ? sat(u) : 0;
       }
       int node = getNextNode(satList);
+      // System.out.println("Waiting outside colorLock " + Thread.currentThread().getName());
       synchronized(Shared.colorLock) {
         Shared.someoneIsColoring = true;
         Shared.visited[node] = true;
-        for (char color: Shared.colorSet) {
+        boolean colorFound = false;
+        for (int color: Shared.colorSet) {
           if (isValidColoring(node, color)) {
             Shared.color[node] = color;
             Shared.someoneIsColoring = false;
+            colorFound = true;
             break;
           }
         }
-        Shared.nodeList.remove(Integer.valueOf(node));
-        if (Shared.pending > 0) {
-          turnstileUnlock(); // open the turnstile 
-          turnstileLock(); 
-          turnstileUnlock(); // this guy is done coloring, open the turnstile for the next guy
+        if (!colorFound) { // add a new color
+          int end = Shared.colorSet.size() - 1;
+          Shared.color[node] = Shared.colorSet.get(end) + 1; // last color+1
+          Shared.colorSet.add(Shared.color[node]);
         }
+        Shared.nodeList.remove(Integer.valueOf(node));
+      }
+      if (Shared.pending > 0) {
+        turnstileUnlock(); // open the turnstile 
+        // System.out.println("Waiting inside color turnstile " + Thread.currentThread().getName());
+        turnstileLock(); 
+        turnstileUnlock(); // this guy is done coloring, open the turnstile for the next guy
       }
     }
     return true;
   }
 
-  private boolean isValidColoring(int node, char color) {
+  private boolean isValidColoring(int node, int color) {
     for (int neighbor: Shared.adjList[node])
       if (Shared.color[neighbor] == color)
         return false;
@@ -68,7 +79,7 @@ class DSatur implements Callable<Boolean> {
   }
 
   private int sat(int u) { // heuristic: number of uniquely colored nodes
-    Set<Character> unique = new HashSet<Character>(); 
+    Set<Integer> unique = new HashSet<Integer>(); 
     for (int v: Shared.adjList[u]) {
       unique.add(Shared.color[v]);
     }

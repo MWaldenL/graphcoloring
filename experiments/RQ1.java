@@ -4,7 +4,7 @@ import java.util.concurrent.*;
 
 
 public class RQ1 {
-    private static final int N_THREADS = 16;
+    private static final int N_THREADS = 32;
 
     public static void main(String[] args) {
         setup();
@@ -33,12 +33,15 @@ public class RQ1 {
     }
 
     private static void setup() {
-        int V = 15;
+        int V = 100;
         int e = (V*(V-1))/2;
-        String graph = (new GraphGenerator()).getEdgeList(V, e);
+        String graph = GraphGenerator.getEdgeList(V, e/2);
         String[] edgeList = graph.split("\n");
         ArrayList<Integer>[] adjList = new ArrayList[V];
-        char[] colorSet = {'R', 'G', 'B', 'Y'};
+        ArrayList<Integer> colorSet = new ArrayList<Integer>();
+        for (int i=0; i < V; i++) {
+          colorSet.add(i);
+        }
         for (int i=0; i < V; i++) {
           adjList[i] = new ArrayList<Integer>();
         }

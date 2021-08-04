@@ -1,24 +1,17 @@
+import java.io.*;
 import java.util.*;
 
 class Main {
   static boolean PRINT = true;
   public static void main(String[] args) {
-    String raw = 
-      "0 1\n" + 
-      "0 2\n" + 
-      "0 3\n" + 
-      "1 2\n" + 
-      "2 3\n" +
-      "2 4\n" + 
-      "4 5\n" + 
-      "4 7\n" + 
-      "5 6\n" + 
-      "5 7\n" + 
-      "6 7\n";
+    int V = 4;
+    String raw = getEdgeListFromFile();
     String[] edgeList = raw.split("\n");
-    int V = 8;
     ArrayList<Integer>[] adjList = new ArrayList[V];
-    char[] colors = {'R', 'G', 'B', 'Y'};
+    ArrayList<Integer> colorSet = new ArrayList<Integer>();
+    for (int i=0; i<V; i++) {
+      colorSet.add(i);
+    }
     for (int i=0; i<V; i++) {
       adjList[i] = new ArrayList<Integer>();
     }
@@ -38,7 +31,21 @@ class Main {
         } System.out.println();
       }
     }
-    DSatur gcHelper = new DSatur(adjList, colors);
+    DSatur gcHelper = new DSatur(adjList, colorSet);
     gcHelper.run();
+  }
+
+  private static String getEdgeListFromFile() {
+    File file = new File("test.txt");
+    StringBuilder sb = new StringBuilder();
+    try {
+      BufferedReader br = new BufferedReader(new FileReader(file));
+      String st;
+      while ((st = br.readLine()) != null) {
+        sb.append(String.format("%s\n", st));  
+      }
+      br.close();
+    } catch(Exception e) {}
+    return sb.toString();
   }
 }

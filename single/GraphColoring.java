@@ -2,22 +2,23 @@ import java.util.*;
 
 public class GraphColoring {
   public ArrayList<Integer>[] adjList;
-  public char[] colorSet, color;
+  public ArrayList<Integer> colorSet;
+  public int[] color;
   public boolean[] visited;
   protected int V;
 
-  public GraphColoring(ArrayList<Integer>[] adjList, char[] colorSet) {
+  public GraphColoring(ArrayList<Integer>[] adjList, ArrayList<Integer> colorSet) {
     this.colorSet = colorSet;
     this.adjList = adjList;
     this.V = adjList.length;
-    color = new char[V];
+    color = new int[V];
     visited = new boolean[V];
     for (int i=0; i<V; i++) {
       visited[i] = false;
     }
   }
 
-  protected boolean isValidColoring(int node, char col) {
+  protected boolean isValidColoring(int node, int col) {
     for (int neighbor: adjList[node])
       if (color[neighbor] == col)
         return false;
@@ -29,8 +30,8 @@ public class GraphColoring {
       System.out.println("No solution");
       return;
     }
-    for (char c: color) {
-      System.out.printf("%c ", c);
+    for (int c: color) {
+      System.out.printf("%d ", c);
     } System.out.println();
   }
 }

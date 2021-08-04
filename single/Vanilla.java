@@ -4,7 +4,7 @@
 import java.util.*;
 
 class Vanilla extends GraphColoring {
-  public Vanilla(ArrayList<Integer>[] adjList, char[] colorSet) {
+  public Vanilla(ArrayList<Integer>[] adjList, ArrayList<Integer> colorSet) {
     super(adjList, colorSet);
     color[0] = 'R';
   }
@@ -18,7 +18,7 @@ class Vanilla extends GraphColoring {
     visited[curNode] = true;
     for (int neighbor: adjList[curNode]) { // try all neighbors
       if (visited[neighbor]) continue;
-      for (char col: colorSet) { // try all colors
+      for (int col: colorSet) { // try all colors
         if (isValidColoring(neighbor, col)) {
           color[neighbor] = col;
           dfs(neighbor);

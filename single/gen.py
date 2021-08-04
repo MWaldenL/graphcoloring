@@ -65,8 +65,8 @@ def main():
     MODE = "random"
     with open('test.txt', 'w') as f:
       g = generate_random_weighted_graph(
-          v=500,
-          e=124750,
+          v=20,
+          e=190,
           min_weight=1,
           max_weight=10,
           seed=11111,

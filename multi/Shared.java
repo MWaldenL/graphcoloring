@@ -2,8 +2,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class Shared {
-  public static ArrayList<Integer> adjList[], nodeList;
-  public static char[] colorSet, color;
+  public static ArrayList<Integer> adjList[], nodeList, colorSet;
+  public static int[] color;
   public static boolean someoneIsColoring, visited[];
   public static int C, pending;
   private int V;
@@ -14,11 +14,11 @@ public class Shared {
   public static Object colorLock = new Object();
   public static Object jobLock = new Object();
 
-  public Shared(ArrayList<Integer>[] adjList, char[] colorSet) {
+  public Shared(ArrayList<Integer>[] adjList, ArrayList<Integer> colorSet) {
     this.V = adjList.length;
     Shared.colorSet = colorSet;
     Shared.adjList = adjList;
-    Shared.color = new char[V];
+    Shared.color = new int[V];
     Shared.visited = new boolean[V];
     Shared.nodeList = new ArrayList<Integer>();
     Shared.someoneIsColoring = false;
@@ -31,7 +31,7 @@ public class Shared {
     // initial state: color node with highest degree and remove it
     int u0 = getStartingNode();
     Shared.visited[u0] = true;
-    Shared.color[u0] = Shared.colorSet[0];
+    Shared.color[u0] = Shared.colorSet.get(0);
     Shared.nodeList.remove(u0);
   }
 

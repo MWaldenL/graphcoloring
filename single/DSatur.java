@@ -7,7 +7,7 @@ class DSatur extends GraphColoring {
   private ArrayList<Integer> nodeList;
   private int[] marked;
 
-  public DSatur(ArrayList<Integer>[] adjList, char[] colorSet) {
+  public DSatur(ArrayList<Integer>[] adjList, ArrayList<Integer> colorSet) {
     super(adjList, colorSet);
     nodeList = new ArrayList<Integer>();
     for (int i=0; i < adjList.length; i++) {
@@ -30,7 +30,7 @@ class DSatur extends GraphColoring {
   }
 
   private int sat(int u) {
-    Set<Character> unique = new HashSet<Character>(); 
+    Set<Integer> unique = new HashSet<Integer>(); 
     for (int v: adjList[u]) {
       unique.add(color[v]);
     }
@@ -56,7 +56,7 @@ class DSatur extends GraphColoring {
   private void dsatur() {
     int u0 = getStartingNode(), satList[]; // get the node with the highest degree
     visited[u0] = true;
-    color[u0] = colorSet[new Random().nextInt(colorSet.length)]; // random initial color
+    color[u0] = colorSet.get(0); // set initial color
     nodeList.remove(u0);
     while (nodeList.size() > 0) { // if done coloring, stop
       satList = new int[V]; 
@@ -65,9 +65,18 @@ class DSatur extends GraphColoring {
       }
       int node = getNextNode(satList);
       visited[node] = true;
-      for (char col: colorSet) {
-        if (isValidColoring(node, col))
+      boolean found = false;
+      for (int col: colorSet) {
+        if (isValidColoring(node, col)) {
           color[node] = col;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        color[node] = colorSet.get(colorSet.size()-1) + 1;
+        colorSet.add(color[node]);
+        System.out.println("not found, color = " + color[node]);
       }
       nodeList.remove(Integer.valueOf(node));
     }

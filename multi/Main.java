@@ -3,8 +3,9 @@ import java.util.*;
 import java.util.concurrent.*;
 
 class Main {
-  static boolean PRINT = true;
-  static final int N_THREADS = 2;
+  static boolean PRINT = false;
+  static int V = 500;
+  static final int N_THREADS = 4;
 
   public static void main(String[] args) {
     setup(); 
@@ -12,6 +13,7 @@ class Main {
     DSatur task = new DSatur();
     ArrayList<Future<?>> results = new ArrayList<Future<?>>();
     // Log starting time here
+    long t0 = System.currentTimeMillis();
     for (int i=0; i<N_THREADS; i++) {
       Future<?> f = e.submit(task); // each thread will run dsatur
       results.add(f);
@@ -19,20 +21,24 @@ class Main {
     e.shutdown();
     for (int i=0; i<N_THREADS; i++) {
       Future<?> res = results.get(i);
-      try {
-        res.get();
-      } catch(Exception exc) {}
+      try { res.get(); } catch(Exception exc) {}
     }
     // Log ending time here 
-    System.out.println(Shared.color);
+    long elapsed = System.currentTimeMillis() - t0;
+    System.out.println("Elapsed time (ms): " + elapsed);
+    for (int color: Shared.color) {
+      System.out.printf("%d ", color);
+    } System.out.println();
   }
 
   private static void setup() {
-    int V = 10;
     String raw = getEdgeListFromFile();
     String[] edgeList = raw.split("\n");
     ArrayList<Integer>[] adjList = new ArrayList[V];
-    char[] colorSet = {'R', 'G', 'B', 'Y'};
+    ArrayList<Integer> colorSet = new ArrayList<Integer>();
+    for (int i=0; i < V; i++) {
+      colorSet.add(i);
+    }
     for (int i=0; i < V; i++) {
       adjList[i] = new ArrayList<Integer>();
     }
@@ -51,6 +57,7 @@ class Main {
     }
     Shared shared = new Shared(adjList, colorSet);
   }
+  
   private static String getEdgeListFromFile() {
     File file = new File("test.txt");
     StringBuilder sb = new StringBuilder();

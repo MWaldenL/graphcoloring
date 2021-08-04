@@ -4,9 +4,8 @@ import java.util.concurrent.*;
 
 
 public class RQ1 {
-    private static final int N_THREADS = 8;
+    private static final int N_THREADS = 16;
 
-    
     public static void main(String[] args) {
         setup();
         System.out.println("THREADS: " + N_THREADS);
@@ -34,7 +33,8 @@ public class RQ1 {
     }
 
     private static void setup() {
-        int V = 10, e = 10;
+        int V = 15;
+        int e = (V*(V-1))/2;
         String graph = (new GraphGenerator()).getEdgeList(V, e);
         String[] edgeList = graph.split("\n");
         ArrayList<Integer>[] adjList = new ArrayList[V];

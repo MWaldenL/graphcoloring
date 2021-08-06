@@ -5,12 +5,13 @@ import java.util.concurrent.*;
 class Main {
   static boolean PRINT = false;
   static int V = 500;
-  static final int N_THREADS = 4;
+  static final int N_THREADS = 16;
 
   public static void main(String[] args) {
     setup(); 
     ThreadPoolExecutor e = (ThreadPoolExecutor) Executors.newFixedThreadPool(N_THREADS);
-    DSatur task = new DSatur();
+    DSaturALT task = new DSaturALT(); // orig dsatur 
+    // DSatur task = new DSatur(); // degree based heu
     ArrayList<Future<?>> results = new ArrayList<Future<?>>();
     // Log starting time here
     long t0 = System.currentTimeMillis();
@@ -26,9 +27,9 @@ class Main {
     // Log ending time here 
     long elapsed = System.currentTimeMillis() - t0;
     System.out.println("Elapsed time (ms): " + elapsed);
-    for (int color: Shared.color) {
-      System.out.printf("%d ", color);
-    } System.out.println();
+    // for (int color: Shared.color) {
+    //   System.out.printf("%d ", color);
+    // } System.out.println();
   }
 
   private static void setup() {
